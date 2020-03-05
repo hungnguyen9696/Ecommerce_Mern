@@ -268,8 +268,10 @@ exports.listSearch = (req, res) => {
     }
 };
 
+
+//https://docs.mongodb.com/manual/reference/method/db.collection.bulkWrite/
 exports.decreaseQuantity = (req, res, next) => {
-    let bulkOps = req.body.order.products.map(item => {
+    let arrayOfOperation = req.body.order.products.map(item => {
         return {
             updateOne: {
                 filter: { _id: item._id },
@@ -278,7 +280,7 @@ exports.decreaseQuantity = (req, res, next) => {
         };
     });
 
-    Product.bulkWrite(bulkOps, {}, (error, products) => {
+    Product.bulkWrite(arrayOfOperation, {}, (error, products) => {
         if (error) {
             return res.status(400).json({
                 error: 'Could not update product'
