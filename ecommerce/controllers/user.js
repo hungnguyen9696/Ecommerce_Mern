@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const { Order, CartItem } = require('../models/order');
 
 const { errorHandler } = require('../helpers/dbErrorHandler');
 
@@ -103,5 +104,20 @@ exports.addOrderToUserHistory = (req, res, next) => {
         }
         next();
     });
+};
+
+exports.purchaseHistory = (req, res) => {
+    //check order schema, user is userId
+    Order.find({ user: req.profile._id })
+        .populate('user', '_id name')
+        .sort('-created')
+        .exec((err, orders) => {
+            if (err) {
+                return res.status(400).json({
+                    error: errorHandler(err)
+                })
+            }
+            res.json(orders)
+        })
 };
 
