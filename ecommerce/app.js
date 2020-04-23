@@ -18,12 +18,19 @@ const orderRoutes = require('./routes/order');
 const app = express();
 
 // db
-mongoose
-    .connect(process.env.DATABASE, {
+mongoose.connect(
+    process.env.MONGO_URI,
+    {
         useNewUrlParser: true,
-        useCreateIndex: true
-    })
+        useCreateIndex: true,
+        useUnifiedTopology: true
+    }
+)
     .then(() => console.log('DB Connected'));
+
+mongoose.connection.on('error', err => {
+    console.log(`DB connection error: ${err.message}`)
+});
 
 // middlewares
 app.use(morgan('dev'));
@@ -45,3 +52,8 @@ const port = process.env.PORT || 8000;
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
+
+// will redirect all the non-api routes to react frontend
+// router.use(function (req, res) {
+//     res.sendFile(path.join(__dirname, '../client', 'build', 'index.html'));
+// });
